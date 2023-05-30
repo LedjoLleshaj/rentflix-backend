@@ -3,13 +3,16 @@ import * as auth from './auth/login.js'
 import { AuthForm } from './types/auth'
 import { Category, Pattern, Title } from './types/film'
 
-// const list = await getFilmList()
-// console.log('getFilmList ->', list)
+export interface RContext {
+    username?: string
+    customer_id?: number
+}
 
 export const resolvers = {
     Query: {
         login: (parent, args: AuthForm) => auth.login(args),
-        filmList: () => filmQuery.getFilmList(),
+        filmList: (parents, args, contextValue: RContext) =>
+            filmQuery.getFilmList(contextValue),
         filmByTitle: (parent, args: Title) => filmQuery.getFilmByTitle(args),
         filmsByCategory: (parent, args: Category) =>
             filmQuery.getFilmsByCategory(args),

@@ -1,8 +1,10 @@
 import { Film, Category, Title, Pattern } from '../types/film'
 import { poolDvdRental } from '../services/databases.js'
+import { RContext } from '../resolvers.js'
 
 // Default are ordered by title (ASC)
-export async function getFilmList(): Promise<[Film]> {
+export async function getFilmList(contextValue: RContext): Promise<[Film]> {
+    console.log(contextValue)
     const response = await poolDvdRental.query(
         `SELECT * FROM film ORDER BY title`
     )
@@ -25,10 +27,10 @@ export async function getFilmsByTitlePattern(
 
 export async function getFilmsByCategory(category: Category): Promise<[Film]> {
     const q = `
-    SELECT * FROM film f 
-        JOIN film_category fc on f.film_id = fc.film_id 
-        JOIN category cat on cat.category_id = fc.category_id 
-    WHERE cat.name = $1 
+    SELECT * FROM film f
+        JOIN film_category fc on f.film_id = fc.film_id
+        JOIN category cat on cat.category_id = fc.category_id
+    WHERE cat.name = $1
     ORDER BY f.title`
     const response = await poolDvdRental.query(q, [category.category])
     return response.rows

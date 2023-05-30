@@ -16,19 +16,24 @@ export async function login(form: AuthForm): Promise<AuthResponse> {
     )
     if (query.rows.length === 0) {
         throw new GraphQLError(
-            'You are not authorized to perform this action.',
+            'Authentication failed. Please check your username or password.',
             {
                 extensions: {
-                    code: 'FORBIDDEN',
+                    code: 'UNAUTHENTICATED',
+                    http: { status: 401 },
                 },
             }
         )
     }
-    const token = jwt.sign({ username: username }, SECRET_KEY, {
-        expiresIn: '2 days',
-    })
-
+    // TODO: add customer id
+    const customer_id = query.rows[0].customer_id
     return {
-        token: token,
+        token: jwt.sign(
+            { username: username, customer_id: customer_id },
+            SECRET_KEY,
+            {
+                expiresIn: '24h',
+            }
+        ),
     }
 }
