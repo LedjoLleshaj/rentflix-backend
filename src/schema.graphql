@@ -1,0 +1,37 @@
+type Query {
+    login(username: String!, password: String!): TokenResponse!
+    filmList: [Film!]!
+    filmByTitle(title: String!): [Film!]!
+    filmsByCategory(category: String!): [Film!]!
+    filmsByTitlePattern(pattern: String!): [Film!]!
+}
+
+type TokenResponse {
+    token: String!
+}
+
+enum mpaa_rating {
+    G
+    PG
+    PG13
+    R
+    NC17
+}
+
+type Film {
+    film_id: Int!
+    title: String!
+    description: String
+    release_year: Int
+    language: String!
+    rental_duration: Int!
+    rental_rate: Float!
+    length: Int
+    replacement_cost: Float!
+    rating: mpaa_rating
+    last_update: String! #date
+    special_features: [String!]!
+    fulltext: String!
+    #categories: [String!]!
+    #actors: [String!]!
+}
