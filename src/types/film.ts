@@ -25,3 +25,11 @@ export interface Title {
 export interface Pattern {
     pattern: string
 }
+
+export interface Rental_History {
+    film_title: string
+    rental_date: string
+    return_date?: string
+    store_address: string
+    amount: number
+}
