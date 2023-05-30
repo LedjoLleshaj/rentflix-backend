@@ -24,11 +24,9 @@ export async function login(form: AuthForm): Promise<AuthResponse> {
             }
         )
     }
-    const token = jwt.sign(
-        { username: username, password: password },
-        SECRET_KEY,
-        { expiresIn: '2 days' }
-    )
+    const token = jwt.sign({ username: username }, SECRET_KEY, {
+        expiresIn: '2 days',
+    })
 
     return {
         token: token,
