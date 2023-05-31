@@ -5,6 +5,7 @@ type Query {
     filmsByCategory(category: String!): [Film!]!
     filmsByTitlePattern(pattern: String!): [Film!]!
     historyOfRentalsByCustomerId(): [History!]!
+    rentalStatsByCustomerId(): [RentalStats!]!
 }
 
 type TokenResponse {
@@ -44,3 +45,11 @@ type History {
     store_address: String!
     amount: Float!
 }
+
+type RentalStats {
+    current_rentals: Int!
+    total_amount: Float!
+    most_frequent_category: String!
+    total_rentals: Int!
+}
+`;

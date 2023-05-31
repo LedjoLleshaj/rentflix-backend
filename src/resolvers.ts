@@ -17,5 +17,7 @@ export const resolvers = {
             filmQuery.getFilmsByTitlePattern(args),
         historyOfRentalsByCustomerId: (parent, args, contextValue) =>
             filmQuery.getHistoryOfRentalsByCustomerId(contextValue),
+        rentalStats: (parent, args, contextValue) =>
+            filmQuery.getRentalStats(contextValue),
     },
 }
