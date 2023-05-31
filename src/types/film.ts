@@ -27,10 +27,10 @@ export interface Pattern {
 }
 
 export interface Rental_History {
-    film_title: string
+    title: string
     rental_date: string
     return_date?: string
-    store_address: string
+    address: string
     amount: number
 }
 

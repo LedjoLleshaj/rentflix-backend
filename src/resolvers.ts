@@ -11,16 +11,15 @@ export interface RContext {
 export const resolvers = {
     Query: {
         login: (parent, args: AuthForm) => auth.login(args),
-        filmList: (parents, args, contextValue: RContext) =>
-            filmQuery.getFilmList(contextValue),
+        filmList: (parents, args) => filmQuery.getFilmList(),
         filmByTitle: (parent, args: Title) => filmQuery.getFilmByTitle(args),
         filmsByCategory: (parent, args: Category) =>
             filmQuery.getFilmsByCategory(args),
         filmsByTitlePattern: (parent, args: Pattern) =>
             filmQuery.getFilmsByTitlePattern(args),
-        historyOfRentalsByCustomerId: (parent, args, contextValue) =>
+        historyOfRentalsByCustomerId: (parent, args, contextValue: RContext) =>
             filmQuery.getHistoryOfRentalsByCustomerId(contextValue),
-        rentalStats: (parent, args, contextValue) =>
+        rentalStatsByCustomerId: (parent, args, contextValue: RContext) =>
             filmQuery.getRentalStats(contextValue),
     },
 }

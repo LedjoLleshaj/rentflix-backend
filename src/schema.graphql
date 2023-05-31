@@ -4,8 +4,8 @@ type Query {
     filmByTitle(title: String!): [Film!]!
     filmsByCategory(category: String!): [Film!]!
     filmsByTitlePattern(pattern: String!): [Film!]!
-    historyOfRentalsByCustomerId(): [History!]!
-    rentalStatsByCustomerId(): [RentalStats!]!
+    historyOfRentalsByCustomerId: [Rental_History!]!
+    rentalStatsByCustomerId: RentalStats!
 }
 
 type TokenResponse {
@@ -38,12 +38,12 @@ type Film {
     #actors: [String!]!
 }
 
-type History {
-    film_title: String!
-    rental_date: String! #date
-    return_date: String #date
-    store_address: String!
-    amount: Float!
+type Rental_History {
+    title: String
+    rental_date: String
+    return_date: String
+    address: String
+    amount: Float
 }
 
 type RentalStats {
@@ -52,4 +52,3 @@ type RentalStats {
     most_frequent_category: String!
     total_rentals: Int!
 }
-`;
