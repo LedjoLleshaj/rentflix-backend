@@ -26,8 +26,10 @@ export async function getFilmByTitle(title: Title): Promise<[Film]> {
 export async function getFilmsByTitlePattern(
     pattern: Pattern
 ): Promise<[Film]> {
-    const q = `SELECT * FROM film WHERE title LIKE %$1% LIMIT 5`
-    const response = await poolDvdRental.query(q, [pattern.pattern])
+    const q = 'SELECT * FROM film WHERE title LIKE $1 LIMIT 5'
+    const patternValue = `%${pattern.pattern}%`
+    const response = await poolDvdRental.query(q, [patternValue])
+
     return response.rows
 }
 
