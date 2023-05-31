@@ -21,5 +21,6 @@ export const resolvers = {
             filmQuery.getHistoryOfRentalsByCustomerId(contextValue),
         rentalStatsByCustomerId: (parent, args, contextValue: RContext) =>
             filmQuery.getRentalStats(contextValue),
+        getFilmDetails: (parent, args: Title) => filmQuery.getFilmDetails(args),
     },
 }

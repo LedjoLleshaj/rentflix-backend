@@ -6,6 +6,7 @@ type Query {
     filmsByTitlePattern(pattern: String!): [Film!]!
     historyOfRentalsByCustomerId: [Rental_History!]!
     rentalStatsByCustomerId: RentalStats!
+    getFilmDetails(title: String!): FilmDetails!
 }
 
 type TokenResponse {
@@ -36,6 +37,28 @@ type Film {
     fulltext: String!
     #categories: [String!]!
     #actors: [String!]!
+}
+
+type Address {
+    street: String
+    city: String
+    region: String
+    country: String
+}
+
+type FilmDetails {
+    film_id: Int
+    title: String
+    release_year: Int
+    language: String
+    length: Int
+    rating: String
+    description: String
+    actors: String
+    category: String
+    rental_duration: Int
+    rental_rate: Float
+    disponibility: [Address]
 }
 
 type Rental_History {
