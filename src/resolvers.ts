@@ -9,6 +9,13 @@ export interface RContext {
 }
 
 export const resolvers = {
+    mpaa_rating: {
+        G: 'G',
+        PG: 'PG',
+        PG13: 'PG-13',
+        R: 'R',
+        NC17: 'NC-17',
+    },
     Query: {
         login: (parent, args: AuthForm) => auth.login(args),
         filmList: (parents, args) => filmQuery.getFilmList(),

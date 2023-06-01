@@ -26,7 +26,7 @@ type Film {
     title: String!
     description: String
     release_year: Int
-    language: String!
+    language: String
     rental_duration: Int!
     rental_rate: Float!
     length: Int
@@ -52,7 +52,7 @@ type FilmDetails {
     release_year: Int
     language: String
     length: Int
-    rating: String
+    rating: mpaa_rating
     description: String
     actors: String
     category: String
