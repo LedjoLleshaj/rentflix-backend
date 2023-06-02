@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken'
 import { AuthForm, AuthResponse } from '../types/auth'
 import dotenv from 'dotenv'
 import { GraphQLError } from 'graphql'
-import { poolPostgres } from '../services/databases.js'
+import { poolPostgres, poolDvdRental } from '../services/databases.js'
 
 dotenv.config({ path: '.env.dev' })
 const SECRET_KEY = process.env.SECRET_KEY
@@ -26,6 +26,11 @@ export async function login(form: AuthForm): Promise<AuthResponse> {
         )
     }
     const customer_id = query.rows[0].customer_id
+    const user_info = await poolDvdRental.query(
+        `SELECT first_name,last_name,email FROM customer WHERE customer_id = $1`,
+        [customer_id]
+    )
+
     return {
         token: jwt.sign(
             { username: username, customer_id: customer_id },
@@ -34,5 +39,6 @@ export async function login(form: AuthForm): Promise<AuthResponse> {
                 expiresIn: '24h',
             }
         ),
+        ...user_info.rows[0],
     }
 }

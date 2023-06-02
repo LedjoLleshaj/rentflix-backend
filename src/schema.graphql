@@ -1,5 +1,5 @@
 type Query {
-    login(username: String!, password: String!): TokenResponse!
+    login(username: String!, password: String!): LoginResponse
     filmList: [Film!]!
     filmByTitle(title: String!): [Film!]!
     filmsByCategory(category: String!): [Film!]!
@@ -10,8 +10,11 @@ type Query {
     getCategories: [String!]!
 }
 
-type TokenResponse {
-    token: String!
+type LoginResponse {
+    token: String
+    first_name: String
+    last_name: String
+    email: String
 }
 
 enum mpaa_rating {
