@@ -44,14 +44,13 @@ app.use(
     // an Apollo Server instance and optional configuration options
     expressMiddleware(server, {
         context: async ({ req }) => {
-            // check if the token is in the request and if it's valid
-            // disable the authentication for the login
-            if (req.body.operationName === 'Login') {
-                return {}
-            }
-            let token = req.headers.authorization || ''
+            let token = req.headers.authorization
             // Check if the token is well formatted
             if (!token || token.indexOf('Bearer ') === -1) {
+                // disable the authentication for the login
+                if (req.body.operationName === 'Login') {
+                    return {}
+                }
                 throw new GraphQLError('Token not found', {
                     extensions: {
                         code: 'BAD_REQUEST',

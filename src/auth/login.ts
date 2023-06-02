@@ -25,7 +25,6 @@ export async function login(form: AuthForm): Promise<AuthResponse> {
             }
         )
     }
-    // TODO: add customer id
     const customer_id = query.rows[0].customer_id
     return {
         token: jwt.sign(

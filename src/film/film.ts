@@ -10,24 +10,27 @@ import {
 import { poolDvdRental } from '../services/databases.js'
 import { RContext } from '../resolvers.js'
 
-// Default are ordered by title (ASC)
 export async function getFilmList(): Promise<[Film]> {
+    // TODO: filter only by available films
     const response = await poolDvdRental.query(
-        `SELECT f.film_id,f.title,f.description,f.release_year,lang.name as language,f.rental_duration,f.rental_rate,f.length, 
-            f.replacement_cost,f.rating,f.last_update,f.special_features,f.fulltext FROM film f
-		INNER JOIN language lang on lang.language_id = f.language_id FROM film ORDER BY f.title`
+        `SELECT f.film_id,f.title,f.description,f.release_year,lang.name as
+                language,f.rental_duration,f.rental_rate,f.length,
+                f.replacement_cost,f.rating,f.last_update,f.special_features,f.fulltext
+            FROM film f
+		        INNER JOIN language lang on
+		            lang.language_id = f.language_id
+            ORDER BY f.title`
     )
     return response.rows
 }
 
 export async function getFilmByTitle(title: Title): Promise<[Film]> {
     const q = `
-    SELECT f.film_id,f.title,f.description,f.release_year,lang.name as language,f.rental_duration,f.rental_rate,f.length, 
+    SELECT f.film_id,f.title,f.description,f.release_year,lang.name as language,f.rental_duration,f.rental_rate,f.length,
     f.replacement_cost,f.rating,f.last_update,f.special_features,f.fulltext FROM film f
     INNER JOIN language lang on lang.language_id = f.language_id
     WHERE f.title = $1`
     const response = await poolDvdRental.query(q, [title.title])
-    console.log(response.rows)
     return response.rows
 }
 
@@ -38,11 +41,11 @@ export async function getFilmsByTitlePattern(
         'SELECT f.film_id,f.title,f.description,f.release_year,lang.name as language,f.rental_duration,f.rental_rate,f.length,f.replacement_cost,f.rating,f.last_update,f.special_features,f.fulltext FROM film f INNER JOIN language lang on lang.language_id = f.language_id WHERE title LIKE $1 LIMIT 5'
     const patternValue = `%${pattern.pattern}%`
     const response = await poolDvdRental.query(q, [patternValue])
-
     return response.rows
 }
 
 export async function getFilmsByCategory(category: Category): Promise<[Film]> {
+    // TODO: filter only by available films
     const q = `
     SELECT f.film_id,f.title,f.description,f.release_year,lang.name as language,f.rental_duration,f.rental_rate,f.length,f.replacement_cost,f.rating,f.last_update,f.special_features,f.fulltext FROM film f
 		INNER JOIN language lang on lang.language_id = f.language_id
@@ -69,7 +72,6 @@ export async function getHistoryOfRentalsByCustomerId(
     ORDER BY r.return_date DESC
     `
     const response = await poolDvdRental.query(q_history, [customer_id])
-    console.log(response.rows)
     return response.rows
 }
 
