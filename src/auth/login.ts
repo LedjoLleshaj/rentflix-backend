@@ -2,17 +2,25 @@ import jwt from 'jsonwebtoken'
 import { AuthForm, AuthResponse } from '../types/auth'
 import dotenv from 'dotenv'
 import { GraphQLError } from 'graphql'
+<<<<<<< HEAD
 import { poolPostgres, poolDvdRental } from '../services/databases.js'
+=======
+import { poolPostgres } from '../services/databases.js'
+import crypto from 'crypto'
+>>>>>>> 0a23477cae2c393e778503289d438543f8c4c091
 
 dotenv.config({ path: '.env.dev' })
 const SECRET_KEY = process.env.SECRET_KEY
 
 export async function login(form: AuthForm): Promise<AuthResponse> {
-    const { username, password } = form
+    const password = crypto
+        .createHash('md5')
+        .update(form.password)
+        .digest('hex')
 
     const query = await poolPostgres.query(
         'SELECT * FROM public.users WHERE username = $1 AND password_md5 = $2',
-        [username, password]
+        [form.username, password]
     )
     if (query.rows.length === 0) {
         throw new GraphQLError(
@@ -33,7 +41,7 @@ export async function login(form: AuthForm): Promise<AuthResponse> {
 
     return {
         token: jwt.sign(
-            { username: username, customer_id: customer_id },
+            { username: form.username, customer_id: customer_id },
             SECRET_KEY,
             {
                 expiresIn: '24h',
