@@ -36,6 +36,8 @@ export const resolvers = {
             filmQuery.getRentalStats(contextValue),
         getFilmDetails: (parent, args: Title, contextValue: RContext) =>
             requireContext(contextValue) && filmQuery.getFilmDetails(args),
+        getCategories: (parent, args, contextValue: RContext) =>
+            requireContext(contextValue) && filmQuery.getCategories(),
     },
 }
 

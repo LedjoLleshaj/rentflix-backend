@@ -11,14 +11,16 @@ import { poolDvdRental } from '../services/databases.js'
 import { RContext } from '../resolvers.js'
 
 export async function getFilmList(): Promise<[Film]> {
-    // TODO: filter only by available films
     const response = await poolDvdRental.query(
-        `SELECT f.film_id,f.title,f.description,f.release_year,lang.name as
+        `SELECT DISTINCT f.film_id,f.title,f.description,f.release_year,lang.name as
                 language,f.rental_duration,f.rental_rate,f.length,
                 f.replacement_cost,f.rating,f.last_update,f.special_features,f.fulltext
             FROM film f
 		        INNER JOIN language lang on
 		            lang.language_id = f.language_id
+				INNER JOIN inventory i on i.film_id = f.film_id
+				INNER JOIN rental r on r.inventory_id = i.inventory_id
+			WHERE r.return_date IS NOT NULL
             ORDER BY f.title`
     )
     return response.rows
@@ -38,20 +40,22 @@ export async function getFilmsByTitlePattern(
     pattern: Pattern
 ): Promise<[Film]> {
     const q =
-        'SELECT f.film_id,f.title,f.description,f.release_year,lang.name as language,f.rental_duration,f.rental_rate,f.length,f.replacement_cost,f.rating,f.last_update,f.special_features,f.fulltext FROM film f INNER JOIN language lang on lang.language_id = f.language_id WHERE title LIKE $1 LIMIT 5'
+        'SELECT DISTINCT f.film_id,f.title,f.description,f.release_year,lang.name as language,f.rental_duration,f.rental_rate,f.length,f.replacement_cost,f.rating,f.last_update,f.special_features,f.fulltext FROM film f INNER JOIN language lang on lang.language_id = f.language_id INNER JOIN inventory i on i.film_id = f.film_id INNER JOIN rental r on r.inventory_id = i.inventory_id WHERE r.return_date IS NOT NULL AND title LIKE $1 LIMIT 5'
     const patternValue = `%${pattern.pattern}%`
     const response = await poolDvdRental.query(q, [patternValue])
     return response.rows
 }
 
 export async function getFilmsByCategory(category: Category): Promise<[Film]> {
-    // TODO: filter only by available films
     const q = `
-    SELECT f.film_id,f.title,f.description,f.release_year,lang.name as language,f.rental_duration,f.rental_rate,f.length,f.replacement_cost,f.rating,f.last_update,f.special_features,f.fulltext FROM film f
+    SELECT DISTINCT f.film_id,f.title,f.description,f.release_year,lang.name as language,f.rental_duration,f.rental_rate,f.length,f.replacement_cost,f.rating,f.last_update,f.special_features,f.fulltext FROM film f
 		INNER JOIN language lang on lang.language_id = f.language_id
         INNER JOIN film_category fc on f.film_id = fc.film_id
         INNER JOIN category cat on cat.category_id = fc.category_id
-    WHERE cat.name = $1
+		INNER JOIN inventory i on i.film_id = f.film_id
+		INNER JOIN rental r on r.inventory_id = i.inventory_id
+	WHERE r.return_date IS NOT NULL
+    AND cat.name = $1
     ORDER BY f.title`
     const response = await poolDvdRental.query(q, [category.category])
     return response.rows
@@ -154,4 +158,10 @@ export async function getFilmDetails(title: Title): Promise<FilmDetails> {
         ...response.rows[0],
         disponibility: response_film_inventory.rows,
     }
+}
+
+export async function getCategories(): Promise<string[]> {
+    const selectAllCategories = `SELECT name FROM category`
+    const response = await poolDvdRental.query(selectAllCategories)
+    return response.rows.map((row) => row.name)
 }
