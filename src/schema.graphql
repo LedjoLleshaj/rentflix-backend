@@ -1,13 +1,20 @@
 type Query {
-    login(username: String!, password: String!): TokenResponse!
+    login(username: String!, password: String!): LoginResponse
     filmList: [Film!]!
     filmByTitle(title: String!): [Film!]!
     filmsByCategory(category: String!): [Film!]!
     filmsByTitlePattern(pattern: String!): [Film!]!
+    historyOfRentalsByCustomerId: [Rental_History!]!
+    rentalStatsByCustomerId: RentalStats!
+    getFilmDetails(title: String!): FilmDetails!
+    getCategories: [String!]!
 }
 
-type TokenResponse {
-    token: String!
+type LoginResponse {
+    token: String
+    first_name: String
+    last_name: String
+    email: String
 }
 
 enum mpaa_rating {
@@ -23,7 +30,7 @@ type Film {
     title: String!
     description: String
     release_year: Int
-    language: String!
+    language: String
     rental_duration: Int!
     rental_rate: Float!
     length: Int
@@ -34,4 +41,41 @@ type Film {
     fulltext: String!
     #categories: [String!]!
     #actors: [String!]!
+}
+
+type Address {
+    street: String
+    city: String
+    region: String
+    country: String
+}
+
+type FilmDetails {
+    film_id: Int
+    title: String
+    release_year: Int
+    language: String
+    length: Int
+    rating: mpaa_rating
+    description: String
+    actors: String
+    category: String
+    rental_duration: Int
+    rental_rate: Float
+    disponibility: [Address]
+}
+
+type Rental_History {
+    title: String
+    rental_date: String
+    return_date: String
+    address: String
+    amount: Float
+}
+
+type RentalStats {
+    current_rentals: Int!
+    total_amount: Float!
+    most_frequent_category: String!
+    total_rentals: Int!
 }

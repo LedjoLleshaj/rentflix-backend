@@ -6,11 +6,13 @@ import http from 'http'
 import cors from 'cors'
 import bodyParser from 'body-parser'
 import { readFileSync } from 'fs'
-import { resolvers } from './resolvers.js'
+import { RContext, resolvers } from './resolvers.js'
+import { GraphQLError } from 'graphql'
+import dotenv from 'dotenv'
+import jwt from 'jsonwebtoken'
 
-interface MyContext {
-    token?: string
-}
+dotenv.config({ path: '.env.dev' })
+const SECRET_KEY = process.env.SECRET_KEY
 
 // Required logic for integrating with Express
 const app = express()
@@ -19,12 +21,12 @@ const app = express()
 // enabling our servers to shut down gracefully.
 const httpServer = http.createServer(app)
 
-const schema = readFileSync('src/schema.graphql')
+const typeDefs = readFileSync('src/schema.graphql')
 
 // Same ApolloServer initialization as before, plus the drain plugin
 // for our httpServer.
-const server = new ApolloServer<MyContext>({
-    typeDefs: `${schema}`,
+const server = new ApolloServer<RContext>({
+    typeDefs: `${typeDefs}`,
     resolvers: resolvers,
     plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
 })
@@ -41,7 +43,40 @@ app.use(
     // expressMiddleware accepts the same arguments:
     // an Apollo Server instance and optional configuration options
     expressMiddleware(server, {
-        context: async ({ req }) => ({ token: req.headers.token }),
+        context: async ({ req }) => {
+            let token = req.headers.authorization
+            // Check if the token is well formatted
+            if (!token || token.indexOf('Bearer ') === -1) {
+                // disable the authentication for the login
+                if (req.body.operationName === 'Login') {
+                    return {}
+                }
+                throw new GraphQLError('Token not found', {
+                    extensions: {
+                        code: 'BAD_REQUEST',
+                        http: { status: 400 },
+                    },
+                })
+            }
+            token = token.replace('Bearer ', '')
+            try {
+                const payload = jwt.verify(token, SECRET_KEY) as RContext
+                return {
+                    username: payload.username,
+                    customer_id: payload.customer_id,
+                }
+            } catch (e) {
+                throw new GraphQLError(
+                    'Token is invalid. Please login again.',
+                    {
+                        extensions: {
+                            code: 'UNAUTHENTICATED',
+                            http: { status: 401 },
+                        },
+                    }
+                )
+            }
+        },
     })
 )
 
