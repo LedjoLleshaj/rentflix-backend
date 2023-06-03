@@ -2,12 +2,8 @@ import jwt from 'jsonwebtoken'
 import { AuthForm, AuthResponse } from '../types/auth'
 import dotenv from 'dotenv'
 import { GraphQLError } from 'graphql'
-<<<<<<< HEAD
 import { poolPostgres, poolDvdRental } from '../services/databases.js'
-=======
-import { poolPostgres } from '../services/databases.js'
 import crypto from 'crypto'
->>>>>>> 0a23477cae2c393e778503289d438543f8c4c091
 
 dotenv.config({ path: '.env.dev' })
 const SECRET_KEY = process.env.SECRET_KEY
