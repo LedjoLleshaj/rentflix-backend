@@ -6,20 +6,22 @@ import {
     Rental_History,
     RentalStats,
     FilmDetails,
+    FilmTable,
 } from '../types/film'
 import { poolDvdRental } from '../services/databases.js'
 import { RContext } from '../resolvers.js'
 
-export async function getFilmList(): Promise<[Film]> {
+export async function getFilmList(): Promise<[FilmTable]> {
     const response = await poolDvdRental.query(
-        `SELECT DISTINCT f.film_id,f.title,f.description,f.release_year,lang.name as
-                language,f.rental_duration,f.rental_rate,f.length,
-                f.replacement_cost,f.rating,f.last_update,f.special_features,f.fulltext
+        `SELECT DISTINCT f.title,f.release_year as year,f.rating,cat.name as category,lang.name as
+                language,f.rental_rate as cost
             FROM film f
 		        INNER JOIN language lang on
 		            lang.language_id = f.language_id
 				INNER JOIN inventory i on i.film_id = f.film_id
 				INNER JOIN rental r on r.inventory_id = i.inventory_id
+				INNER JOIN film_category fc on fc.film_id = f.film_id 
+				INNER JOIN category cat on cat.category_id = fc.category_id
 			WHERE r.return_date IS NOT NULL
             ORDER BY f.title`
     )

@@ -1,6 +1,6 @@
 type Query {
     login(username: String!, password: String!): LoginResponse
-    filmList: [Film!]!
+    filmList: [FilmTable!]!
     filmByTitle(title: String!): [Film!]!
     filmsByCategory(category: String!): [Film!]!
     filmsByTitlePattern(pattern: String!): [Film!]!
@@ -8,6 +8,15 @@ type Query {
     rentalStatsByCustomerId: RentalStats!
     getFilmDetails(title: String!): FilmDetails!
     getCategories: [String!]!
+}
+
+type FilmTable {
+    title: String!
+    year: Int
+    rating: mpaa_rating
+    category: String
+    language: String
+    cost: Float
 }
 
 type LoginResponse {

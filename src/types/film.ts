@@ -14,6 +14,15 @@ export interface Film {
     fulltext: string
 }
 
+export interface FilmTable {
+    title: string
+    year: number
+    rating: string
+    category: string
+    language: string
+    cost: number
+}
+
 export interface Address {
     street: string
     city: string
