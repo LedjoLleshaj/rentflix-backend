@@ -1,6 +1,6 @@
 type Query {
     login(username: String!, password: String!): LoginResponse
-    filmList: [FilmTable!]!
+    filmList: [Film!]!
     filmByTitle(title: String!): [Film!]!
     filmsByCategory(category: String!): [Film!]!
     filmsByTitlePattern(pattern: String!): [Film!]!
@@ -23,7 +23,6 @@ type LoginResponse {
     token: String
     first_name: String
     last_name: String
-    email: String
 }
 
 enum mpaa_rating {

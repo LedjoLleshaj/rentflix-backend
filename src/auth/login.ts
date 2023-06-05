@@ -34,7 +34,6 @@ export async function login(form: AuthForm): Promise<AuthResponse> {
         `SELECT first_name,last_name,email FROM customer WHERE customer_id = $1`,
         [customer_id]
     )
-
     return {
         token: jwt.sign(
             { username: form.username, customer_id: customer_id },
@@ -43,6 +42,7 @@ export async function login(form: AuthForm): Promise<AuthResponse> {
                 expiresIn: '24h',
             }
         ),
-        ...user_info.rows[0],
+        first_name: user_info.rows[0]?.first_name,
+        last_name: user_info.rows[0]?.last_name,
     }
 }
