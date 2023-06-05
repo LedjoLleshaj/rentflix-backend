@@ -8,6 +8,7 @@ type Query {
     rentalStatsByCustomerId: RentalStats!
     getFilmDetails(title: String!): FilmDetails!
     getCategories: [String!]!
+    getFilms(filter: GetFilmsFilterInput): GetFilmsOutput!
 }
 
 type FilmTable {
@@ -86,4 +87,40 @@ type RentalStats {
     total_amount: Float!
     most_frequent_category: String!
     total_rentals: Int!
+}
+
+# FILMS FILTERS
+
+type FilmTest {
+    film_id: Int!
+    title: String!
+    description: String
+    release_year: Int
+    language: String
+    rental_duration: Int!
+    rental_rate: Float!
+    length: Int
+    replacement_cost: Float!
+    rating: String!
+    category_id: Int!
+    category: String!
+}
+
+input GetFilmsFilterInput {
+    title: String
+    categories: [Int!]
+    page: Int
+    filmPerPage: Int
+    orderBy: String
+    sort: Sort
+}
+
+type GetFilmsOutput {
+    films: [FilmTest!]!
+    total: Int!
+}
+
+enum Sort {
+  asc
+  desc
 }

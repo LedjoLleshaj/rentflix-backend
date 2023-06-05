@@ -38,6 +38,9 @@ export const resolvers = {
             requireContext(contextValue) && filmQuery.getFilmDetails(args),
         getCategories: (parent, args, contextValue: RContext) =>
             requireContext(contextValue) && filmQuery.getCategories(),
+
+        getFilms: (_, { filter }, context) =>
+            requireContext(context) && filmQuery.getFilms({ filter }),
     },
 }
 
