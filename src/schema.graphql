@@ -1,38 +1,16 @@
 type Query {
     login(username: String!, password: String!): LoginResponse
     getFilms(filter: GetFilmsFilterInput): GetFilmsOutput!
+    getFilm(film_id: ID!): Film!
     getRentsOfCustomer(filter: GetRentsOfCustomerFilterInput): GetRentsOfCustomerOutput!
     rentalStatsByCustomerId: RentalStats!
-    getFilmDetails(title: String!): FilmDetails!
-    getCategories: [String!]!
+    getCategories: [Category!]!
 }
 
 type LoginResponse {
     token: String
     first_name: String
     last_name: String
-}
-
-type Address {
-    street: String
-    city: String
-    region: String
-    country: String
-}
-
-type FilmDetails {
-    film_id: Int
-    title: String
-    release_year: Int
-    language: String
-    length: Int
-    rating: String!
-    description: String
-    actors: String
-    category: String
-    rental_duration: Int
-    rental_rate: Float
-    disponibility: [Address]
 }
 
 type RentalStats {
@@ -58,6 +36,7 @@ type Film {
     rating: String!
     category: Category
     actors: [Actor!]!
+    availableStores: [Store!]!
 }
 
 type Category {
@@ -76,6 +55,40 @@ type Actor {
     actor_id: ID!
     first_name: String!
     last_name: String!
+    last_update: String!
+}
+
+type Store {
+    store_id: ID!
+    manager_staff_id: ID!
+    address_id: ID!
+    address: Address!
+    last_update: String!
+}
+
+type Address {
+    address_id: ID!
+    address: String!
+    address2: String
+    district: String!
+    city_id: ID!
+    city: City!
+    postal_code: String
+    phone: String!
+    last_update: String!
+}
+
+type City {
+    city_id: ID!
+    city: String!
+    country_id: ID!
+    country: Country!
+    last_update: String!
+}
+
+type Country {
+    country_id: ID!
+    country: String!
     last_update: String!
 }
 

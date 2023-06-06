@@ -15,3 +15,12 @@ export async function getCategoryOfFilm(film_id: string) {
             }
         )
 }
+
+export async function getCategories() {
+    return await poolDvdRental.query(`SELECT * FROM category`).then(
+        (response) => response.rows,
+        (error) => {
+            throw error
+        }
+    )
+}
