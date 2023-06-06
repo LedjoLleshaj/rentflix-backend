@@ -5,6 +5,7 @@ type Query {
     getRentsOfCustomer(filter: GetRentsOfCustomerFilterInput): GetRentsOfCustomerOutput!
     rentalStatsByCustomerId: RentalStats!
     getCategories: [Category!]!
+    getUser: User!
 }
 
 type LoginResponse {
@@ -124,6 +125,20 @@ input GetRentsOfCustomerFilterInput {
 type GetRentsOfCustomerOutput {
     rents: [Rent!]!
     total: Int!
+}
+
+type User {
+    first_name: String!
+    last_name: String!
+    email: String!
+    rental_stats: RentalStatistics!
+}
+
+type RentalStatistics {
+    current_rentals: Int
+    total_rentals: Int
+    total_amount: Float
+    most_frequent_category: Category
 }
 
 enum Sort {
