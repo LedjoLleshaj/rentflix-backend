@@ -1,55 +1,17 @@
 type Query {
     login(username: String!, password: String!): LoginResponse
-    filmList: [Film!]!
-    filmByTitle(title: String!): [Film!]!
-    filmsByCategory(category: String!): [Film!]!
-    filmsByTitlePattern(pattern: String!): [Film!]!
+    getFilms(filter: GetFilmsFilterInput): GetFilmsOutput!
+    getRentsOfCustomer(filter: GetRentsOfCustomerFilterInput): GetRentsOfCustomerOutput!
     historyOfRentalsByCustomerId: [Rental_History!]!
     rentalStatsByCustomerId: RentalStats!
     getFilmDetails(title: String!): FilmDetails!
     getCategories: [String!]!
-    getFilms(filter: GetFilmsFilterInput): GetFilmsOutput!
-}
-
-type FilmTable {
-    title: String!
-    year: Int
-    rating: mpaa_rating
-    category: String
-    language: String
-    cost: Float
 }
 
 type LoginResponse {
     token: String
     first_name: String
     last_name: String
-}
-
-enum mpaa_rating {
-    G
-    PG
-    PG13
-    R
-    NC17
-}
-
-type Film {
-    film_id: Int!
-    title: String!
-    description: String
-    release_year: Int
-    language: String
-    rental_duration: Int!
-    rental_rate: Float!
-    length: Int
-    replacement_cost: Float!
-    rating: mpaa_rating
-    last_update: String! #date
-    special_features: [String!]!
-    fulltext: String!
-    #categories: [String!]!
-    #actors: [String!]!
 }
 
 type Address {
@@ -65,7 +27,7 @@ type FilmDetails {
     release_year: Int
     language: String
     length: Int
-    rating: mpaa_rating
+    rating: String!
     description: String
     actors: String
     category: String
@@ -91,7 +53,7 @@ type RentalStats {
 
 # FILMS FILTERS
 
-type FilmTest {
+type Film {
     film_id: Int!
     title: String!
     description: String
@@ -106,6 +68,14 @@ type FilmTest {
     category: String!
 }
 
+type Rent {
+    title: String!
+    rental_date: String!
+    return_date: String
+    address: String!
+    amount: Float!
+}
+
 input GetFilmsFilterInput {
     title: String
     categories: [Int!]
@@ -116,7 +86,19 @@ input GetFilmsFilterInput {
 }
 
 type GetFilmsOutput {
-    films: [FilmTest!]!
+    films: [Film!]!
+    total: Int!
+}
+
+input GetRentsOfCustomerFilterInput {
+    page: Int
+    filmPerPage: Int
+    orderBy: String
+    sort: Sort
+}
+
+type GetRentsOfCustomerOutput {
+    rents: [Rent!]!
     total: Int!
 }
 

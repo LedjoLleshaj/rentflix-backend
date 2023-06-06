@@ -1,8 +1,10 @@
 import * as filmQuery from './film/film.js'
 import * as auth from './auth/login.js'
 import { AuthForm } from './types/auth'
-import { Category, Pattern, Title } from './types/film'
+import { Title } from './types/film'
 import { GraphQLError } from 'graphql'
+import { getFilms } from './film/get-films.js'
+import { getRentsOfCustomer } from './film/get-rents-of-customer.js'
 
 export interface RContext {
     username?: string
@@ -10,24 +12,13 @@ export interface RContext {
 }
 
 export const resolvers = {
-    mpaa_rating: {
-        G: 'G',
-        PG: 'PG',
-        PG13: 'PG-13',
-        R: 'R',
-        NC17: 'NC-17',
-    },
     Query: {
         login: (parent, args: AuthForm) => auth.login(args),
-        filmList: (parent, args, contextValue: RContext) =>
-            requireContext(contextValue) && filmQuery.getFilmList(),
-        filmByTitle: (parent, args: Title, contextValue: RContext) =>
-            requireContext(contextValue) && filmQuery.getFilmByTitle(args),
-        filmsByCategory: (parent, args: Category, contextValue: RContext) =>
-            requireContext(contextValue) && filmQuery.getFilmsByCategory(args),
-        filmsByTitlePattern: (parent, args: Pattern, contextValue: RContext) =>
-            requireContext(contextValue) &&
-            filmQuery.getFilmsByTitlePattern(args),
+        getFilms: (_, { filter }, context) =>
+            requireContext(context) && getFilms({ filter }),
+        getRentsOfCustomer: (parent, { filter }, context) =>
+            requireContext(context) &&
+            getRentsOfCustomer({ customer_id: context.customer_id, filter }),
         historyOfRentalsByCustomerId: (parent, args, contextValue: RContext) =>
             requireContext(contextValue) &&
             filmQuery.getHistoryOfRentalsByCustomerId(contextValue),
@@ -38,9 +29,6 @@ export const resolvers = {
             requireContext(contextValue) && filmQuery.getFilmDetails(args),
         getCategories: (parent, args, contextValue: RContext) =>
             requireContext(contextValue) && filmQuery.getCategories(),
-
-        getFilms: (_, { filter }, context) =>
-            requireContext(context) && filmQuery.getFilms({ filter }),
     },
 }
 
