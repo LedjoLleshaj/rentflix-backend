@@ -2,15 +2,11 @@ import { poolDvdRental } from '../services/databases.js'
 
 export async function getFilms({ filter }) {
     const response = await poolDvdRental.query(`
-        SELECT DISTINCT f.title, f.*, cat.name as category, cat.category_id,lang.name as language
+        SELECT DISTINCT f.*
         FROM film f
-            INNER JOIN language lang on lang.language_id = f.language_id
             INNER JOIN inventory i on i.film_id = f.film_id
             INNER JOIN rental r on r.inventory_id = i.inventory_id
-            INNER JOIN film_category fc on fc.film_id = f.film_id 
-            INNER JOIN category cat on cat.category_id = fc.category_id
-        WHERE r.return_date IS NOT NULL
-        ORDER BY f.title`)
+        WHERE r.return_date IS NOT NULL`)
 
     if (filter) {
         if (filter.categories) {

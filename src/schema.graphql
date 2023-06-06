@@ -2,7 +2,6 @@ type Query {
     login(username: String!, password: String!): LoginResponse
     getFilms(filter: GetFilmsFilterInput): GetFilmsOutput!
     getRentsOfCustomer(filter: GetRentsOfCustomerFilterInput): GetRentsOfCustomerOutput!
-    historyOfRentalsByCustomerId: [Rental_History!]!
     rentalStatsByCustomerId: RentalStats!
     getFilmDetails(title: String!): FilmDetails!
     getCategories: [String!]!
@@ -36,14 +35,6 @@ type FilmDetails {
     disponibility: [Address]
 }
 
-type Rental_History {
-    title: String
-    rental_date: String
-    return_date: String
-    address: String
-    amount: Float
-}
-
 type RentalStats {
     current_rentals: Int!
     total_amount: Float!
@@ -54,18 +45,38 @@ type RentalStats {
 # FILMS FILTERS
 
 type Film {
-    film_id: Int!
+    film_id: ID!
     title: String!
     description: String
     release_year: Int
-    language: String
+    language_id: ID!
+    language: Language
     rental_duration: Int!
     rental_rate: Float!
     length: Int
     replacement_cost: Float!
     rating: String!
-    category_id: Int!
-    category: String!
+    category: Category
+    actors: [Actor!]!
+}
+
+type Category {
+    category_id: ID!
+    name: String!
+    last_update: String!
+}
+
+type Language {
+    language_id: ID!
+    name: String!
+    last_update: String!
+}
+
+type Actor {
+    actor_id: ID!
+    first_name: String!
+    last_name: String!
+    last_update: String!
 }
 
 type Rent {

@@ -20,24 +20,8 @@ export interface FilmDetails {
     disponibility: Address[] // address of the store where the film is available
 }
 
-export interface Category {
-    category: string
-}
-
 export interface Title {
     title: string
-}
-
-export interface Pattern {
-    pattern: string
-}
-
-export interface Rental_History {
-    title: string
-    rental_date: string
-    return_date?: string
-    address: string
-    amount: number
 }
 
 export interface RentalStats {
