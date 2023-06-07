@@ -14,7 +14,7 @@ export async function getUserRentalStats(customer_id) {
         [customer_id]
     )
 
-    const q_sum = `SELECT SUM(amount) FROM payment WHERE rental_id IN (SELECT rental_id FROM rental WHERE customer_id = $1)`
+    const q_sum = `select sum(amount) from payment where customer_id = $1`
     const q_sum_response = await poolDvdRental.query(q_sum, [customer_id])
 
     const q_count = `SELECT COUNT(*) FROM rental WHERE customer_id = $1`
