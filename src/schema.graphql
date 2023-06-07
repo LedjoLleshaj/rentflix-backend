@@ -3,6 +3,7 @@ type Query {
     getFilms(filter: GetFilmsFilterInput): GetFilmsOutput!
     getFilm(film_id: ID!): Film!
     getRentals(filter: GetRentalFilterInput): GetRentsOfCustomerOutput!
+    getRental(rental_id: ID!): Rental!
     rentalStatsByCustomerId: RentalStats!
     getCategories: [Category!]!
     getUser: User!

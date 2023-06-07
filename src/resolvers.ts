@@ -1,7 +1,7 @@
 import * as auth from './auth/login.js'
 import { AuthForm } from './types/auth'
 import { GraphQLError } from 'graphql'
-import { getRentals, rentFilm } from './methods/rental.js'
+import { getRental, getRentals, rentFilm } from './methods/rental.js'
 import { getCategories, getCategoryOfFilm } from './methods/category.js'
 import { getLanguageById } from './methods/language.js'
 import { getActorsOfFilm } from './methods/actors.js'
@@ -29,6 +29,8 @@ export const resolvers = {
         getRentals: (parent, { filter }, context) =>
             requireContext(context) &&
             getRentals({ customer_id: context.customer_id, filter }),
+        getRental: (_, { rental_id }, context) =>
+            requireContext(context) && getRental(rental_id),
         getCategories: (_, __, context) =>
             requireContext(context) && getCategories(),
         getUser: (_, __, context) =>

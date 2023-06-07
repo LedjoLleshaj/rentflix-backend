@@ -1,12 +1,15 @@
 import { poolDvdRental } from '../services/databases.js'
 
+const rentalPeriodSnippet = `CASE
+WHEN r.return_date is not null THEN (r.return_date::DATE - r.rental_date::DATE) + 1
+ELSE (current_date::DATE - r.rental_date::DATE) + 1
+END as rental_period
+`
+
 export async function getRentals({ customer_id, filter }) {
     const response = await poolDvdRental.query(
         `select r.*, f.title as film_title,
-            CASE
-                WHEN r.return_date is not null THEN (r.return_date::DATE - r.rental_date::DATE) + 1
-                ELSE (current_date::DATE - r.rental_date::DATE) + 1
-            end as rental_period,
+            ${rentalPeriodSnippet},
             a.address as store_address, c.city as store_city, co.country as store_country,
             p.amount as payment_amount
             from rental r
@@ -120,4 +123,18 @@ export async function rentFilm(
     )
 
     return response.rows[0]
+}
+
+export async function getRental(rental_id: string) {
+    return await poolDvdRental
+        .query(
+            `SELECT *, ${rentalPeriodSnippet} FROM rental r WHERE r.rental_id = $1`,
+            [rental_id]
+        )
+        .then(
+            (response) => response.rows[0],
+            (error) => {
+                throw error
+            }
+        )
 }
