@@ -2,18 +2,23 @@ import { poolDvdRental } from '../services/databases.js'
 
 export async function getRentals({ customer_id, filter }) {
     const response = await poolDvdRental.query(
-        `select *, f.title as film_title, (r.return_date::DATE - r.rental_date::DATE) + 1 as rental_period,
-        a.address as store_address, c.city as store_city, co.country as store_country,
-        p.amount as payment_amount
-        from rental r
-        inner join inventory i on i.inventory_id = r.inventory_id
-        inner join film f on f.film_id = i.film_id
-        inner join store s on s.store_id = i.store_id
-        inner join address a on a.address_id = s.address_id
-        inner join city c on c.city_id = a.city_id
-        inner join country co on co.country_id = c.country_id
-        inner join payment p on p.rental_id = r.rental_id
-        where r.customer_id = $1`,
+        `select r.*, f.title as film_title,
+            CASE
+                WHEN r.return_date is not null THEN (r.return_date::DATE - r.rental_date::DATE) + 1
+                ELSE (current_date::DATE - r.rental_date::DATE) + 1
+            end as rental_period,
+            a.address as store_address, c.city as store_city, co.country as store_country,
+            p.amount as payment_amount
+            from rental r
+            inner join inventory i on i.inventory_id = r.inventory_id
+            inner join film f on f.film_id = i.film_id
+            inner join store s on s.store_id = i.store_id
+            inner join address a on a.address_id = s.address_id
+            inner join city c on c.city_id = a.city_id
+            inner join country co on co.country_id = c.country_id
+            left join payment p on p.rental_id = r.rental_id
+            where r.customer_id = $1
+        `,
         [customer_id]
     )
 

@@ -111,6 +111,7 @@ type Rental {
     inventory_id: ID!
     inventory: Inventory!
     return_date: String
+    rental_period: Int
     payment: Payment
 }
 
