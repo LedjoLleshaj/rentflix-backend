@@ -7,8 +7,7 @@ export async function getUser(context) {
     return response.rows[0]
 }
 
-export async function getUserRentalStats(context) {
-    const customer_id = context.customer_id
+export async function getUserRentalStats(customer_id) {
     const q_current_rentals = `SELECT COUNT(*) as active_rentals FROM rental where customer_id = $1 and return_date is NULL`
     const q_current_rentals_response = await poolDvdRental.query(
         q_current_rentals,
