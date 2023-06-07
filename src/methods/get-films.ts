@@ -9,7 +9,7 @@ export async function getFilms({ filter }) {
         WHERE r.return_date IS NOT NULL`)
 
     if (filter) {
-        if (filter.categories) {
+        if (filter.categories && filter.categories.length > 0) {
             response.rows = response.rows.filter((row) =>
                 filter.categories.includes(row.category_id)
             )
