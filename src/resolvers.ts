@@ -7,11 +7,14 @@ import { getCategories, getCategoryOfFilm } from './methods/category.js'
 import { getLanguageById } from './methods/language.js'
 import { getActorsOfFilm } from './methods/actors.js'
 import { getFilm } from './methods/get-film.js'
-import { getAvailableStoresOfFilm } from './methods/stores.js'
+import { getAvailableStoresOfFilm, getStoreById } from './methods/store.js'
 import { getAddressById } from './methods/address.js'
 import { getCityById } from './methods/city.js'
 import { getCountryById } from './methods/country.js'
 import { getUser, getUserRentalStats } from './methods/user.js'
+import { rentFilm } from './methods/rent.js'
+import { getInventoryById } from './methods/inventory.js'
+import { getPaymentOfRent } from './methods/payment.js'
 
 export interface RContext {
     username?: string
@@ -33,11 +36,24 @@ export const resolvers = {
         getUser: (_, __, context) =>
             requireContext(context) && getUser(context),
     },
+    Mutation: {
+        rentFilm: (_, { data: { film_id, store_id, rental_date } }, context) =>
+            requireContext(context) &&
+            rentFilm(film_id, store_id, rental_date, context.customer_id),
+    },
     Film: {
         category: (parent) => getCategoryOfFilm(parent.film_id),
         language: (parent) => getLanguageById(parent.language_id),
         actors: (parent) => getActorsOfFilm(parent.film_id),
         availableStores: (parent) => getAvailableStoresOfFilm(parent.film_id),
+    },
+    Rent: {
+        inventory: (parent) => getInventoryById(parent.inventory_id),
+        payment: (parent) => getPaymentOfRent(parent.rental_id),
+    },
+    Inventory: {
+        film: (parent) => getFilm(parent.film_id),
+        store: (parent) => getStoreById(parent.store_id),
     },
     Store: {
         address: (parent) => getAddressById(parent.address_id),

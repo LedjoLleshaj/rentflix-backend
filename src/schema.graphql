@@ -8,6 +8,18 @@ type Query {
     getUser: User!
 }
 
+type Mutation {
+    rentFilm(data: RentFilmInput!): Rent!
+}
+
+scalar DateTime
+
+input RentFilmInput {
+    film_id: ID!
+    store_id: ID!
+    rental_date: DateTime!
+}
+
 type LoginResponse {
     token: String
     first_name: String
@@ -94,11 +106,26 @@ type Country {
 }
 
 type Rent {
-    title: String!
+    rental_id: ID!
     rental_date: String!
+    inventory_id: ID!
+    inventory: Inventory!
     return_date: String
-    address: String!
+    payment: Payment
+}
+
+type Payment {
     amount: Float!
+    payment_date: String!
+}
+
+type Inventory {
+    inventory_id: ID!
+    film_id: ID!
+    film: Film!
+    store_id: ID!
+    store: Store!
+    last_update: String!
 }
 
 input GetFilmsFilterInput {
@@ -117,9 +144,7 @@ type GetFilmsOutput {
 
 input GetRentsOfCustomerFilterInput {
     page: Int
-    filmPerPage: Int
-    orderBy: String
-    sort: Sort
+    itemsPerPage: Int
 }
 
 type GetRentsOfCustomerOutput {

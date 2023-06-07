@@ -17,3 +17,14 @@ export async function getAvailableStoresOfFilm(film_id: string) {
             }
         )
 }
+
+export async function getStoreById(store_id: string) {
+    return await poolDvdRental
+        .query(`SELECT * FROM store WHERE store_id = $1`, [store_id])
+        .then(
+            (response) => response.rows[0],
+            (error) => {
+                throw error
+            }
+        )
+}
