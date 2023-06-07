@@ -2,9 +2,8 @@ type Query {
     login(username: String!, password: String!): LoginResponse
     getFilms(filter: GetFilmsFilterInput): GetFilmsOutput!
     getFilm(film_id: ID!): Film!
-    getRentals(filter: GetRentalFilterInput): GetRentsOfCustomerOutput!
+    getRentals(filter: GetRentalFilterInput): GetRentalsOutput!
     getRental(rental_id: ID!): Rental!
-    rentalStatsByCustomerId: RentalStats!
     getCategories: [Category!]!
     getUser: User!
 }
@@ -26,15 +25,6 @@ type LoginResponse {
     first_name: String
     last_name: String
 }
-
-type RentalStats {
-    current_rentals: Int!
-    total_amount: Float!
-    most_frequent_category: String!
-    total_rentals: Int!
-}
-
-# FILMS FILTERS
 
 type Film {
     film_id: ID!
@@ -151,7 +141,7 @@ input GetRentalFilterInput {
     sort: Sort
 }
 
-type GetRentsOfCustomerOutput {
+type GetRentalsOutput {
     rentals: [Rental!]!
     total: Int!
 }
