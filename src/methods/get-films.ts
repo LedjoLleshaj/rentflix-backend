@@ -2,11 +2,12 @@ import { poolDvdRental } from '../services/databases.js'
 
 export async function getFilms({ filter }) {
     const response = await poolDvdRental.query(`
-        SELECT DISTINCT f.*, fc.category_id
+        SELECT DISTINCT f.*, c.category_id, c.name as category_name
         FROM film f
             INNER JOIN inventory i on i.film_id = f.film_id
             INNER JOIN rental r on r.inventory_id = i.inventory_id
             INNER JOIN film_category fc on fc.film_id = f.film_id
+            INNER JOIN category c on c.category_id = fc.category_id
         WHERE r.return_date IS NOT NULL`)
 
     if (filter) {
@@ -31,6 +32,9 @@ export async function getFilms({ filter }) {
 
         // Handle sorting
         if (filter.orderBy) {
+            if (filter.orderBy === 'category.name') {
+                filter.orderBy = 'category_name'
+            }
             filter.sort = filter.sort || 'asc'
             response.rows = response.rows.sort((a, b) => {
                 if (a[filter.orderBy] < b[filter.orderBy]) {
