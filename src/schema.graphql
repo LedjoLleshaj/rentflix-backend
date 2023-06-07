@@ -2,14 +2,14 @@ type Query {
     login(username: String!, password: String!): LoginResponse
     getFilms(filter: GetFilmsFilterInput): GetFilmsOutput!
     getFilm(film_id: ID!): Film!
-    getRentsOfCustomer(filter: GetRentsOfCustomerFilterInput): GetRentsOfCustomerOutput!
+    getRentals(filter: GetRentalFilterInput): GetRentsOfCustomerOutput!
     rentalStatsByCustomerId: RentalStats!
     getCategories: [Category!]!
     getUser: User!
 }
 
 type Mutation {
-    rentFilm(data: RentFilmInput!): Rent!
+    rentFilm(data: RentFilmInput!): Rental!
 }
 
 scalar DateTime
@@ -105,7 +105,7 @@ type Country {
     last_update: String!
 }
 
-type Rent {
+type Rental {
     rental_id: ID!
     rental_date: String!
     inventory_id: ID!
@@ -142,13 +142,15 @@ type GetFilmsOutput {
     total: Int!
 }
 
-input GetRentsOfCustomerFilterInput {
+input GetRentalFilterInput {
     page: Int
     itemsPerPage: Int
+    orderBy: String
+    sort: Sort
 }
 
 type GetRentsOfCustomerOutput {
-    rents: [Rent!]!
+    rentals: [Rental!]!
     total: Int!
 }
 

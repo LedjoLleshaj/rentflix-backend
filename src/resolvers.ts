@@ -1,20 +1,18 @@
 import * as auth from './auth/login.js'
 import { AuthForm } from './types/auth'
 import { GraphQLError } from 'graphql'
-import { getFilms } from './methods/get-films.js'
-import { getRentsOfCustomer } from './methods/get-rents-of-customer.js'
+import { getRentals, rentFilm } from './methods/rental.js'
 import { getCategories, getCategoryOfFilm } from './methods/category.js'
 import { getLanguageById } from './methods/language.js'
 import { getActorsOfFilm } from './methods/actors.js'
-import { getFilm } from './methods/get-film.js'
+import { getFilm, getFilms } from './methods/film.js'
 import { getAvailableStoresOfFilm, getStoreById } from './methods/store.js'
 import { getAddressById } from './methods/address.js'
 import { getCityById } from './methods/city.js'
 import { getCountryById } from './methods/country.js'
 import { getUser, getUserRentalStats } from './methods/user.js'
-import { rentFilm } from './methods/rent.js'
 import { getInventoryById } from './methods/inventory.js'
-import { getPaymentOfRent } from './methods/payment.js'
+import { getPaymentOfRental } from './methods/payment.js'
 
 export interface RContext {
     username?: string
@@ -28,9 +26,9 @@ export const resolvers = {
             requireContext(context) && getFilms({ filter }),
         getFilm: (_, { film_id }, context) =>
             requireContext(context) && getFilm(film_id),
-        getRentsOfCustomer: (parent, { filter }, context) =>
+        getRentals: (parent, { filter }, context) =>
             requireContext(context) &&
-            getRentsOfCustomer({ customer_id: context.customer_id, filter }),
+            getRentals({ customer_id: context.customer_id, filter }),
         getCategories: (_, __, context) =>
             requireContext(context) && getCategories(),
         getUser: (_, __, context) =>
@@ -47,9 +45,9 @@ export const resolvers = {
         actors: (parent) => getActorsOfFilm(parent.film_id),
         availableStores: (parent) => getAvailableStoresOfFilm(parent.film_id),
     },
-    Rent: {
+    Rental: {
         inventory: (parent) => getInventoryById(parent.inventory_id),
-        payment: (parent) => getPaymentOfRent(parent.rental_id),
+        payment: (parent) => getPaymentOfRental(parent.rental_id),
     },
     Inventory: {
         film: (parent) => getFilm(parent.film_id),
