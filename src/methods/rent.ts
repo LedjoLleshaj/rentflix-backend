@@ -18,6 +18,7 @@ export async function rentFilm(
             }
         )
 
+    // Take first available inventory
     const inventory_id = await poolDvdRental
         .query(
             `SELECT i.*

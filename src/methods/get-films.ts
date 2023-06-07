@@ -2,13 +2,16 @@ import { poolDvdRental } from '../services/databases.js'
 
 export async function getFilms({ filter }) {
     const response = await poolDvdRental.query(`
-        SELECT DISTINCT f.*, c.category_id, c.name as category_name
+        SELECT DISTINCT f.*, c.category_id, c.name as category_name, l.name as language_name
         FROM film f
             INNER JOIN inventory i on i.film_id = f.film_id
             INNER JOIN rental r on r.inventory_id = i.inventory_id
             INNER JOIN film_category fc on fc.film_id = f.film_id
             INNER JOIN category c on c.category_id = fc.category_id
+            INNER JOIN language l on l.language_id = f.language_id
         WHERE r.return_date IS NOT NULL`)
+
+    let total = response.rowCount
 
     if (filter) {
         if (filter.categories && filter.categories.length > 0) {
@@ -23,6 +26,8 @@ export async function getFilms({ filter }) {
             )
         }
 
+        total = response.rows.length
+
         // Handle pagination with filmPerPage and page
         if (filter.filmPerPage && filter.page) {
             const start = filter.filmPerPage * (filter.page - 1)
@@ -32,8 +37,13 @@ export async function getFilms({ filter }) {
 
         // Handle sorting
         if (filter.orderBy) {
-            if (filter.orderBy === 'category.name') {
-                filter.orderBy = 'category_name'
+            switch (filter.orderBy) {
+                case 'category.name':
+                    filter.orderBy = 'category_name'
+                    break
+                case 'language.name':
+                    filter.orderBy = 'language_name'
+                    break
             }
             filter.sort = filter.sort || 'asc'
             response.rows = response.rows.sort((a, b) => {
@@ -50,6 +60,6 @@ export async function getFilms({ filter }) {
 
     return {
         films: response.rows,
-        total: response.rowCount,
+        total,
     }
 }
