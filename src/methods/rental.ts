@@ -1,3 +1,4 @@
+import { GraphQLError } from 'graphql'
 import { poolDvdRental } from '../services/databases.js'
 
 const rentalPeriodSnippet = `CASE
@@ -78,22 +79,22 @@ export async function rentFilm(
     rental_date: Date,
     customer_id: number
 ) {
-    const manager_staff_id = await poolDvdRental
-        .query(
-            `select s.staff_id from staff s inner join store s2 on s2.manager_staff_id = s.staff_id where s2.store_id = $1`,
-            [store_id]
-        )
-        .then(
-            (response) => response.rows[0].staff_id,
-            (error) => {
-                throw error
-            }
-        )
+    const manager = await poolDvdRental.query(
+        `select s.staff_id from staff s inner join store s2 on s2.manager_staff_id = s.staff_id where s2.store_id = $1`,
+        [store_id]
+    )
+
+    if (manager.rowCount === 0) {
+        throw new GraphQLError('No manager found for store', {
+            extensions: { http: { status: 404 } },
+        })
+    }
+
+    const manager_staff_id = manager.rows[0].staff_id
 
     // Take first available inventory
-    const inventory_id = await poolDvdRental
-        .query(
-            `SELECT i.*
+    const inventory = await poolDvdRental.query(
+        `SELECT i.*
             FROM inventory i
             WHERE NOT EXISTS (
               SELECT 1
@@ -105,14 +106,16 @@ export async function rentFilm(
             ) and i.film_id = $1 and i.store_id = $2
             group by inventory_id 
             limit 1`,
-            [film_id, store_id]
-        )
-        .then(
-            (response) => response.rows[0].inventory_id,
-            (error) => {
-                throw error
-            }
-        )
+        [film_id, store_id]
+    )
+
+    if (inventory.rowCount === 0) {
+        throw new GraphQLError('No inventory available', {
+            extensions: { http: { status: 404 } },
+        })
+    }
+
+    const inventory_id = inventory.rows[0].inventory_id
 
     const response = await poolDvdRental.query(
         `

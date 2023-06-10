@@ -20,7 +20,13 @@ export async function getFilms({ filter }) {
             INNER JOIN film_category fc on fc.film_id = f.film_id
             INNER JOIN category c on c.category_id = fc.category_id
             INNER JOIN language l on l.language_id = f.language_id
-        WHERE r.return_date IS NOT NULL`)
+        WHERE NOT EXISTS (
+                SELECT 1
+                FROM rental r
+                WHERE i.inventory_id = r.inventory_id
+                  AND r.return_date IS null
+                  and i.film_id = f.film_id
+              )`)
 
     let total = response.rowCount
 
