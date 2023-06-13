@@ -27,13 +27,6 @@ export async function getRentals({ customer_id, filter }) {
     )
 
     if (filter) {
-        // Handle pagination with itemsPerPage and page
-        if (filter.itemsPerPage && filter.page) {
-            const start = filter.itemsPerPage * (filter.page - 1)
-            const end = start + filter.itemsPerPage
-            response.rows = response.rows.slice(start, end)
-        }
-
         // Handle sorting
         if (filter.orderBy) {
             filter.orderBy = getOrderByColumn(filter.orderBy)
@@ -47,6 +40,12 @@ export async function getRentals({ customer_id, filter }) {
                 }
                 return 0
             })
+        }
+        // Handle pagination with itemsPerPage and page
+        if (filter.itemsPerPage && filter.page) {
+            const start = filter.itemsPerPage * (filter.page - 1)
+            const end = start + filter.itemsPerPage
+            response.rows = response.rows.slice(start, end)
         }
     }
 
@@ -104,7 +103,7 @@ export async function rentFilm(
                 and i.film_id = $1
                 and i.store_id = $2
             ) and i.film_id = $1 and i.store_id = $2
-            group by inventory_id 
+            group by inventory_id
             limit 1`,
         [film_id, store_id]
     )
