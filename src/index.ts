@@ -44,20 +44,13 @@ app.use(
     // an Apollo Server instance and optional configuration options
     expressMiddleware(server, {
         context: async ({ req }) => {
-            let token = req.headers.authorization
+            // if (req.body.operationName === 'IntrospectionQuery') return {}
             // Check if the token is well formatted
-            if (!token || token.indexOf('Bearer ') === -1) {
-                // disable the authentication for the login
-                if (req.body.operationName === 'Login') {
-                    return {}
-                }
-                throw new GraphQLError('Token not found', {
-                    extensions: {
-                        code: 'BAD_REQUEST',
-                        http: { status: 400 },
-                    },
-                })
+            let token = req.headers.authorization ?? ''
+            if (req.body.operationName === 'Login') {
+                return {}
             }
+
             token = token.replace('Bearer ', '')
             try {
                 const payload = jwt.verify(token, SECRET_KEY) as RContext
