@@ -30,7 +30,8 @@ export const resolvers = {
             requireContext(context) &&
             getRentals({ customer_id: context.customer_id, filter }),
         getRental: (_, { rental_id }, context) =>
-            requireContext(context) && getRental(rental_id),
+            requireContext(context) &&
+            getRental(rental_id, context.customer_id),
         getCategories: (_, __, context) =>
             requireContext(context) && getCategories(),
         getUser: (_, __, context) =>

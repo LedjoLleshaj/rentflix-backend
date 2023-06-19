@@ -127,16 +127,23 @@ export async function rentFilm(
     return response.rows[0]
 }
 
-export async function getRental(rental_id: string) {
-    return await poolDvdRental
+export async function getRental(rental_id: string, customer_id: number) {
+    const response = await poolDvdRental
         .query(
-            `SELECT *, ${rentalPeriodSnippet} FROM rental r WHERE r.rental_id = $1`,
-            [rental_id]
+            `SELECT *, ${rentalPeriodSnippet} FROM rental r WHERE r.rental_id = $1 AND r.customer_id = $2`,
+            [rental_id, customer_id]
         )
-        .then(
-            (response) => response.rows[0],
-            (error) => {
-                throw error
-            }
-        )
+        .catch((err) => {
+            throw new GraphQLError(err.message, {
+                extensions: { http: { status: 500 } },
+            })
+        })
+
+    if (response.rowCount === 0) {
+        throw new GraphQLError('Rental not found', {
+            extensions: { http: { status: 404 } },
+        })
+    }
+
+    return response.rows[0]
 }
